@@ -1,13 +1,13 @@
-import discord
+import discord.message
 from discord.ext import commands
 
 import debug
 import helpers
 
-TOKEN = 'OTEzNzkyNjI0MDQ4MDc4ODY4.GEU918.n846Q6FjzLyLdWSI6N2vjRgyTbqhqBQJpeOgO4'
+#token_old = 'OTEzNzkyNjI0MDQ4MDc4ODY4.GEU918.n846Q6FjzLyLdWSI6N2vjRgyTbqhqBQJpeOgO4'
 PERMISSIONS = '8'
 
-description = '''Rait wanted to do a bot, so uhh...here it is!'''
+description = 'Rait wanted to do a bot, so uhh...here it is!'
 bot = commands.Bot(command_prefix='!', description=description)
 
 @bot.event
@@ -16,6 +16,10 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
+
+"""
+COMMANDS
+"""
 
 @bot.command()
 async def add(ctx, left: int, right: int):
@@ -75,5 +79,40 @@ async def add_sticker(ctx:commands.Context, name, link=""):
         img_byte = img.read()
         await ctx.message.guild.create_custom_emoji(name = (name), image = img_byte)
     await debug.msg(ctx, "Done")
+
+@bot.command()
+async def dodo_mins(ctx:commands.Context, time: float):
+    if time % 1 == 0:
+        time = int(time)
+    actual_time = 3 * time
+    message = f"{time} minutes for Dodo will be {actual_time} minutes"
+    hours = actual_time // 60
+    minutes = actual_time % 60
+    if hours > 0:
+        message += " ("
+        if hours == 1:
+            message += "1 hour"
+        elif hours > 0:
+            message += f"{hours} hours"
+        
+        if minutes == 1:
+            message += " and 1 minute"
+        elif minutes > 0:
+            message += f" and {minutes} minutes"
+        message += " ) for us mortals."
+    await debug.msg(ctx, message , True)
+
+"""
+EVENTS
+"""
+
+@commands.Cog.listener()
+async def on_message(self, message:discord.Message):
+    print(f"Message by: {message.author}")
+    print(f"Message content: {message.content}")
+
 if __name__ == '__main__':
-    bot.run(TOKEN)
+    token=""
+    with open("token.txt") as f:
+        token = f.read()
+    bot.run(token)
