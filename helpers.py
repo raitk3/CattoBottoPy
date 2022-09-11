@@ -1,4 +1,5 @@
 """Helper functions for bot"""
+from discord.ext import commands
 
 from distutils.log import debug
 import urllib
@@ -13,6 +14,9 @@ def is_user(message, user, override):
 
 def is_user_debugger(user):
     return "debug" in [role.name for role in user.roles]
+
+def is_user_admin(user):
+    return "admin" in [role.name for role in user.roles]
 
 def save_img(url):
     print("Saving image")
