@@ -127,6 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+__pycache__
+.idea
+.vscode
 
 # The token
 token.txt

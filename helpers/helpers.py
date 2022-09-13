@@ -1,8 +1,8 @@
 """Helper functions for bot"""
 from discord.ext import commands
 
-from distutils.log import debug
 import urllib
+
 
 def is_user(message, user, override):
     if override:
