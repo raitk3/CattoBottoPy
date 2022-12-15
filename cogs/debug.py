@@ -12,7 +12,7 @@ class Debug(commands.Cog, name='Debug'):
         print('Debug tools are loaded')
 
     async def msg(self, ctx, message, override=False):
-        print(message)
+        self.bot.logger.warning(message)
         if ctx.author in self.debug_enabled or override:
             await ctx.author.send(message)
 
@@ -32,8 +32,8 @@ class Debug(commands.Cog, name='Debug'):
         """Check connection and user detection."""
         id = str(ctx.author)[:-5]
         
-        if helpers.is_user_debugger(ctx.author):
-            await self.msg(ctx, f"Pong {id}, you have debugger rights.", True)
+        # if helpers.is_user_debugger(ctx.author):
+        #    await self.msg(ctx, f"Pong {id}, you have debugger rights.", True)
         await ctx.send(f"Pong {id}!")
 
     @commands.command()

@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import os
 
 import discord.message
@@ -18,6 +19,7 @@ async def load(bot):
 
 async def main():
     bot = init_bot()
+    bot.logger = logging.Logger("CattoBottoLogger")
     token=""
     with open("token.txt") as f:
         token = f.read()
