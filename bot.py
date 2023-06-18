@@ -1,9 +1,24 @@
 import asyncio
-import logging
 import os
 
 import discord.message
 from discord.ext import commands
+
+
+import logging
+log = logging.getLogger("cattobottolog")
+formatter = logging.Formatter(
+    "%(asctime)s %(threadName)-11s %(levelname)-10s %(message)s")
+filehandler = logging.FileHandler("debug.txt", "w")
+filehandler.setLevel(logging.DEBUG)
+filehandler.setFormatter(formatter)
+log.addHandler(filehandler)
+
+# Log to stdout too
+streamhandler = logging.StreamHandler()
+streamhandler.setLevel(logging.INFO)
+streamhandler.setFormatter(formatter)
+log.addHandler(streamhandler)
 
 def init_bot():
     PERMISSIONS = '8'
@@ -19,7 +34,6 @@ async def load(bot):
 
 async def main():
     bot = init_bot()
-    bot.logger = logging.Logger("CattoBottoLogger")
     token=""
     with open("token.txt") as f:
         token = f.read()

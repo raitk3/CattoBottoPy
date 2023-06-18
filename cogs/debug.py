@@ -50,5 +50,6 @@ class Debug(commands.Cog, name='Debug'):
             else:
                 await self.msg(ctx, f"Debuging is already off for {user}.", True)
 
+
 async def setup(bot):
     await bot.add_cog(Debug(bot))

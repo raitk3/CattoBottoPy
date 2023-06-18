@@ -33,6 +33,14 @@ class Random(commands.Cog, name='Random'):
             message += ") for us mortals."
         await ctx.send(message)
 
+    @commands.command()
+    async def can_speak_english(self, ctx:commands.Context, name):
+        """???"""
+        if name.lower() in ["sbyter", "rait", "dovi", "tsveti", "dovile", "tsvetelina"]:
+            message = f"Yes, {name} can speak English."
+        else:
+            message = "Hell if I know ¯\_(ツ)_/¯"
+        await ctx.send(message)
         
 async def setup(bot):
     await bot.add_cog(Random(bot))
