@@ -1,9 +1,10 @@
+"""Random AU queue handler"""
+
 from discord.ext import commands
 from discord import Embed, ButtonStyle, Interaction
 from discord.ui import Button, View, button
 
 import logging
-log = logging.getLogger("cattobottolog")
 
 class AmongUsHelpers(commands.Cog, name='AU Helpers'):
     """Among us related things"""
@@ -12,11 +13,11 @@ class AmongUsHelpers(commands.Cog, name='AU Helpers'):
         self.bot = bot
         self.current_imp = None
         self.queue = []
+        self.logger = logging.getLogger("CattoBotto.AU_Helpers")
 
     @commands.Cog.listener()
     async def on_ready(self):
-        log.info("Among Us tools are loaded")
-        print('Among Us tools are loaded')
+        self.logger.info("Among Us tools are loaded")
 
     @commands.command()
     async def get_imp(self, ctx):
