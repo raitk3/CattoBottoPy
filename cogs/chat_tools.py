@@ -16,9 +16,10 @@ class ChatTools(commands.Cog, name='Chat'):
     async def on_ready(self):
         self.logger.info('Chat tools are loaded')
 
+    """
     @commands.command()
     async def purge(self, ctx, number, user=""):
-        """Remove messages from chat."""
+        \"""Remove messages from chat.\"""
         debug = self.bot.get_cog('Debug')
         if (ctx.author in debug.debug_enabled or helpers.is_user_admin(ctx.author)):
             override = user == ""
@@ -32,7 +33,7 @@ class ChatTools(commands.Cog, name='Chat'):
         else:
             self.logger.debug(f"{ctx.author} tried purging but debug wasn't enabled or user is not admin.")
             await ctx.send(f"You're not permitted to purge!")
-
+    """
         
 async def setup(bot):
     await bot.add_cog(ChatTools(bot))

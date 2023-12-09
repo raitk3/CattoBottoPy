@@ -17,7 +17,6 @@ except FileNotFoundError:
 
 # Global logging setup
 logger = logging.getLogger("CattoBotto")
-logger.setLevel(logging.INFO)
 
 # File Handler
 log_start = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -43,7 +42,12 @@ def init_bot():
     intents = discord.Intents.default()
     intents.message_content = True
     description = '''Rait wanted to do a bot, so uhh...here it is!'''
-    return commands.Bot(command_prefix='!', description=description, intents=intents, permissions=PERMISSIONS)
+    return commands.Bot(command_prefix='!', 
+                        description=description,
+                        intents=intents,
+                        permissions=PERMISSIONS,
+                        activity=discord.Game(name="stoobid")
+                        )
 
 async def load(bot, dev):
     for filename in os.listdir('./cogs'):
@@ -59,9 +63,14 @@ async def main(arguments):
     for argument in arguments:
         if argument in ["--debug", "--dev"]:
             dev = True
-        if argument in ["--debug"]:
-            logger.setLevel(logging.DEBUG)
+        
+    if dev:
+        logger.setLevel(logging.DEBUG)
+    else:
+        logger.setLevel(logging.INFO)
+
     bot = init_bot()
+
     token=""
     with open("token.txt") as f:
         token = f.read()

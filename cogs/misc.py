@@ -28,30 +28,28 @@ class Miscellaneous(commands.Cog, name='Miscellaneous'):
     async def about(self, ctx):
         text = ["```",
                 "╔════════════════════════════════════════╗",
-                "║ CattoBotto                             ║",
-                "╠════════════════════════════════════════╣",
                 "║ Awwh, I didn't know you cared <3       ║",
                 "║ Or was it just an accident? :D         ║",
                 "╟────────────────────────────────────────╢",
                 "║         ▄█            Made by sBYTEr   ║",
                 "║       ▄▀ █            2023             ║",
                 "║     ▄▀   █                             ║",
-                "║   ▄▀▄    █    ▄▀▀▀▄                    ║",
-                "║ ▄▀   ▀▄  █  ▄▀     █                   ║",
-                "║  ▀▄    ▀▄█▄▀     ▄▀                    ║",
-                "║   ▄▀    ▄█▄     ▀▄                     ║",
-                "║ ▄▀    ▄▀ █ ▀▄     ▀▄                   ║",
-                "║  ▀▄ ▄▀   █   ▀▄   ▄▀                   ║",
-                "║    ▀     ▀     ▀▀▀                     ║",
+                "║   ▄▀▄    █    ▄▀▀▄                     ║",
+                "║ ▄▀   ▀▄  █  ▄▀    █                    ║",
+                "║  ▀▄    ▀▄█▄▀    ▄▀                     ║",
+                "║   ▄▀    ▄█▄    ▀▄                      ║",
+                "║ ▄▀    ▄▀ █ ▀▄    ▀▄                    ║",
+                "║  ▀▄ ▄▀   █   ▀▄  ▄▀                    ║",
+                "║    ▀     ▀     ▀▀                      ║",
                 "╟────────────────────────────────────────╢",
                 "║ Github repo:                           ║",
                 "║ https://github.com/raitk3/CattoBottoPy ║",
                 "╚════════════════════════════════════════╝",
                 "```"]
-        embed = Embed(title="CattoBottoPy",
+        embed = Embed(title="CattoBotto",
                 url="https://github.com/raitk3/CattoBottoPy",
                 description="\n".join(text))
-        await ctx.send("\n".join(text))
+        await ctx.send(embed=embed)
 
 async def setup(bot):
     await bot.add_cog(Miscellaneous(bot))
