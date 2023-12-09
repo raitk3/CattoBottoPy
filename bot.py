@@ -36,17 +36,18 @@ logger.addHandler(fh)
 logger.addHandler(ch)
 
 
-def init_bot():
+def init_bot(dev = False):
     logger.info("CattoBotto started...")
+    # Needs actual permissions to be set
     PERMISSIONS = '8'
     intents = discord.Intents.default()
     intents.message_content = True
     description = '''Rait wanted to do a bot, so uhh...here it is!'''
-    return commands.Bot(command_prefix='!', 
+    return commands.Bot(command_prefix='!' if dev else '.', 
                         description=description,
                         intents=intents,
                         permissions=PERMISSIONS,
-                        activity=discord.Game(name="stoobid")
+                        activity=discord.Game(name="stoobid" if dev else "smørt")
                         )
 
 async def load(bot, dev):
@@ -63,13 +64,12 @@ async def main(arguments):
     for argument in arguments:
         if argument in ["--debug", "--dev"]:
             dev = True
-        
     if dev:
         logger.setLevel(logging.DEBUG)
     else:
         logger.setLevel(logging.INFO)
 
-    bot = init_bot()
+    bot = init_bot(dev)
 
     token=""
     with open("token.txt") as f:

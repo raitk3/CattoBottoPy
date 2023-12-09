@@ -20,7 +20,7 @@ class Miscellaneous(commands.Cog, name='Miscellaneous'):
     @commands.command()
     async def ping(self, ctx):
         """Check connection and user detection."""
-        id = "".join(str(ctx.author).split("#")[:-1])
+        id = ctx.author
         self.logger.info(f"Received ping from {id}")
         await ctx.send(f"Pong {id}!")
 
