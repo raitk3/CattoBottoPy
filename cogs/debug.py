@@ -48,7 +48,7 @@ class Debug(commands.Cog, name='__Debug__'):
                 self.debug_enabled.remove(user)
                 await self.msg(ctx, f"Debugger set False for {user}.", True)
             else:
-                await self.msg(ctx, f"Debuging is already off for {user}.", True)
+                await self.msg(ctx, f"Debugging is already off for {user}.", True)
 
     @commands.command()
     async def mark_error(self, ctx, message = ""):

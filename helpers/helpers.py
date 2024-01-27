@@ -6,7 +6,6 @@ logger = logging.getLogger("CattoBotto.helper")
 
 def is_user(message, user, override):
     if override:
-        logger("Purge everyones messages.")
         return True
     author = str(message.author.id)
     user_strip = user[2:-1]
