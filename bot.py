@@ -43,11 +43,12 @@ def init_bot(dev = False):
     intents = discord.Intents.default()
     intents.message_content = True
     description = '''Rait wanted to do a bot, so uhh...here it is!'''
-    return commands.Bot(command_prefix='!' if dev else '.', 
+    prefix = '?' if dev else '.'
+    return commands.Bot(command_prefix=prefix, 
                         description=description,
                         intents=intents,
                         permissions=PERMISSIONS,
-                        activity=discord.Game(name="stoobid" if dev else "smørt")
+                        activity=discord.Game(name=f"{prefix}stoobid" if dev else f"{prefix}smørt")
                         )
 
 async def load(bot, dev):

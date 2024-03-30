@@ -22,20 +22,22 @@ class ChatTools(commands.Cog, name='Chat'):
         debug = self.bot.get_cog('__Debug__')
         author = ctx.author
         channel = ctx.channel
-        self.logger.info(f"{ctx.author} tries to purge {number} of messages from {ctx.guild.name}.{channel}{'' if user == '' else f' by {user}'}")
+        server = ctx.guild.id
+        server_name = ctx.guild.name
+        self.logger.info(f"[{server_name} ({server})] {ctx.author} tries to purge {number} of messages from {channel}{'' if user == '' else f' by {user}'}")
         
         if (author in debug.debug_enabled or helpers.is_user_admin(author)):
             override = user == ""
             number_of_messages = min(100, int(number))
             username = 'everyone' if user == '' else user
-            self.logger.info(f"Removing messages by {username} from last {number_of_messages} messages")
+            self.logger.info(f"[{server_name} ({server})] Removing messages by {username} from last {number_of_messages} messages")
             await ctx.send(f"Removing messages by {username} from last {number_of_messages} messages")
             
             deleted = await channel.purge(limit=number_of_messages, check=lambda x, u=user, o=override: helpers.is_user(x, u, o))
-            self.logger.info(f'Deleted {len(deleted)} message(s)')
+            self.logger.info(f'[{server_name} ({server})] Deleted {len(deleted)} message(s)')
             await ctx.send(f'Deleted {len(deleted)} message(s)')
         else:
-            self.logger.error(f"{author} tried purging but debug wasn't enabled or user is not admin.")
+            self.logger.error(f"[{server_name} ({server})] {author} tried purging but debug wasn't enabled or user is not admin.")
             await ctx.send(f"You're not permitted to purge!")
         
 async def setup(bot):

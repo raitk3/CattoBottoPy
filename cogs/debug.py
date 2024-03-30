@@ -16,7 +16,9 @@ class Debug(commands.Cog, name='__Debug__'):
         self.logger.info('Debug tools are loaded')
 
     async def msg(self, ctx, message, override=False):
-        self.logger.warning(f"Sent {message} into a chat")
+        server = ctx.guild.id
+        server_name = ctx.guild.name
+        self.logger.warning(f"[{server_name} ({server})] Sent {message} into a chat")
         if ctx.author in self.debug_enabled or override:
             await ctx.author.send(message)
 
@@ -25,14 +27,18 @@ class Debug(commands.Cog, name='__Debug__'):
         """
         Add two numbers together.
         """
+        server = ctx.guild.id
+        server_name = ctx.guild.name
         result = left + right
-        self.logger.debug(f"Did some math: {left} + {right} = {result}")
+        self.logger.debug(f"[{server_name} ({server})] Did some math: {left} + {right} = {result}")
         await ctx.send(f"{left} + {right} = {result}")
 
     @commands.command()
     async def junk(self, ctx, number):
         """Send n numbers 5 at a time."""
-        self.logger.debug(f"Sending {number} numbers")
+        server = ctx.guild.id
+        server_name = ctx.guild.name
+        self.logger.debug(f"[{server_name} ({server})] Sending {number} numbers")
         for i in range(int(number)):
             await self.msg(ctx, i, True)
 
@@ -49,14 +55,9 @@ class Debug(commands.Cog, name='__Debug__'):
                 await self.msg(ctx, f"Debugger set False for {user}.", True)
             else:
                 await self.msg(ctx, f"Debugging is already off for {user}.", True)
-
-    @commands.command()
-    async def mark_error(self, ctx, message = ""):
-        "In case bot makes something unexpected, mark error place in logs, so I would know something happened."
-        self.logger.error("Marked error")
-        if message:
-            self.logger.error(message)
-        await ctx.send("Error noted and marked in logs. Thank you!")
+        else:
+            logging.info(f"{user} tried enabling debugging but was not allowed to")
+            await self.msg(ctx, "What are you trying to do? You don't have debugging rights.", True)
 
 async def setup(bot):
     await bot.add_cog(Debug(bot))
