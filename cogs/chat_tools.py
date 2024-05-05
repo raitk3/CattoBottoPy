@@ -16,7 +16,7 @@ class ChatTools(commands.Cog, name='Chat'):
     async def on_ready(self):
         self.logger.info('Chat tools are loaded')
 
-    @commands.command()
+    @commands.command(hidden=True)
     async def purge(self, ctx, number, user=""):
         """Remove messages from chat."""
         debug = self.bot.get_cog('__Debug__')

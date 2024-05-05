@@ -22,7 +22,7 @@ class Debug(commands.Cog, name='__Debug__'):
         if ctx.author in self.debug_enabled or override:
             await ctx.author.send(message)
 
-    @commands.command()
+    @commands.command(hidden=True)
     async def add(self, ctx, left: int, right: int):
         """
         Add two numbers together.
@@ -33,7 +33,7 @@ class Debug(commands.Cog, name='__Debug__'):
         self.logger.debug(f"[{server_name} ({server})] Did some math: {left} + {right} = {result}")
         await ctx.send(f"{left} + {right} = {result}")
 
-    @commands.command()
+    @commands.command(hidden=True)
     async def junk(self, ctx, number):
         """Send n numbers 5 at a time."""
         server = ctx.guild.id
@@ -42,7 +42,7 @@ class Debug(commands.Cog, name='__Debug__'):
         for i in range(int(number)):
             await self.msg(ctx, i, True)
 
-    @commands.command()
+    @commands.command(hidden=True)
     async def set_debug(self, ctx, value: bool = None):
         """Set debug mode for debuggers."""
         user = ctx.author

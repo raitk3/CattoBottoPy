@@ -17,6 +17,7 @@ class Experimental(commands.Cog, name='__Experimental__'):
     @commands.Cog.listener()
     async def on_ready(self):
         self.logger.info('Experimental tools are loaded')
+        
 
 async def setup(bot):
     await bot.add_cog(Experimental(bot))

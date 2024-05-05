@@ -1,3 +1,5 @@
+#!/bin/python3
+
 import asyncio
 import logging
 import os
@@ -38,6 +40,7 @@ logger.addHandler(ch)
 
 def init_bot(dev = False):
     logger.info("CattoBotto started...")
+    logger.info(f"discord.py version: {discord.__version__}")
     # Needs actual permissions to be set
     PERMISSIONS = '8'
     intents = discord.Intents.default()
@@ -63,7 +66,7 @@ async def load(bot, dev):
 async def main(arguments):
     dev = False
     for argument in arguments:
-        if argument in ["--debug", "--dev"]:
+        if argument in ["--debug", "--dev", "-d"]:
             dev = True
     if dev:
         logger.setLevel(logging.DEBUG)
