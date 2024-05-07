@@ -10,6 +10,7 @@ from datetime import datetime
 import discord.message
 from discord.ext import commands
 from helpers.log_formatter import ColorlessFormatter, ColorfulFormatter
+from helpers.data import Data
 
 # Make logs directory
 try:
@@ -55,6 +56,7 @@ def init_bot(dev = False):
                         )
 
 async def load(bot, dev):
+    bot.data = Data(bot)
     for filename in os.listdir('./cogs'):
         if filename.endswith('.py'):
             cog_name = filename[:-3]

@@ -133,6 +133,7 @@ __pycache__
 
 # logs
 logs/
+data/data.json
 
 # The token
 token.txt
