@@ -55,7 +55,7 @@ class QueueHandler(commands.Cog, name='Queue handler'):
             server = interaction.guild.id
             server_name = interaction.guild.name
             self.logger.info(f"[{server_name} ({server})] Discard queue requested")
-            self.au_handler.current_msgs[interaction.guild.id] = None
+            self.queue_handler.current_msgs[interaction.guild.id] = None
             await interaction.message.delete()
 
     @commands.Cog.listener()
