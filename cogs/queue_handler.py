@@ -32,7 +32,6 @@ class QueueHandler(commands.Cog, name='Queue handler'):
             await self.queue_handler.add_to_queue(interaction.channel, user)
             await interaction.response.defer()
 
-
         @button(label="Next", style=ButtonStyle.blurple, emoji="➡")
         async def next_in_queue(self, interaction: Interaction, button: Button):
             channel = interaction.channel

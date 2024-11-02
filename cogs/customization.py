@@ -22,7 +22,13 @@ class Customization(commands.Cog, name='Customization'):
     async def namecolor(self, ctx, color):
         """Change your name to your chosen colour.
         
-        Useful tool: https://materialui.co/colors/"""
+        A new role will be created with your username, which will use the specified color.
+        Supported colors are: amber, black, blue, bluegrey, brown, cyan, deeporange, deeppurple, indigo, lime, lightblue, lightgreen, green, grey, magenta, orange, pink, purple, red, rose, teal, yellow
+
+        Additionally a hex code can be used. Hex code must be given Without "0x".
+        Useful tool for copying hex codes: https://materialui.co/colors/
+        """
+
         user = ctx.author
         username = user.name
 

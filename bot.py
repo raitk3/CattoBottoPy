@@ -47,11 +47,13 @@ def init_bot(dev = False):
     intents = discord.Intents.default()
     intents.message_content = True
     description = '''Rait wanted to do a bot, so uhh...here it is!'''
-    prefix = '?' if dev else '.'
+    prefix = 'cb?' if dev else 'cb.'
+    help_cmd = commands.DefaultHelpCommand(show_parameter_descriptions=False)
     return commands.Bot(command_prefix=prefix, 
                         description=description,
                         intents=intents,
                         permissions=PERMISSIONS,
+                        help_command=help_cmd,
                         activity=discord.Game(name=f"{prefix}stoobid" if dev else f"{prefix}smørt")
                         )
 
@@ -60,10 +62,11 @@ async def load(bot, dev):
     for filename in os.listdir('./cogs'):
         if filename.endswith('.py'):
             cog_name = filename[:-3]
-            if cog_name in ['experimental', 'debug'] and not dev:
+            if cog_name in ['experimental', 'emojispam', 'debug'] and not dev:
                 continue
             logger.info(f"Loading module {cog_name}")
             await bot.load_extension(f'cogs.{cog_name}')
+
 
 async def main(arguments):
     dev = False

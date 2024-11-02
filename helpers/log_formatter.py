@@ -11,8 +11,7 @@ class ColorfulFormatter(logging.Formatter):
     purple = "\033[35m"
     reset = "\x1b[0m"
     
-    datefmt = "AAAAA"
-    time = purple + "%(asctime)s" + reset
+    time = purple + "%(asctime)s.%(msecs)03d" + reset
     level_name = "%(levelname)s" + reset
     file = blue + "%(filename)s:%(lineno)d" + reset
     msg =  "%(message)s" + reset
@@ -27,7 +26,7 @@ class ColorfulFormatter(logging.Formatter):
 
     def format(self, record):
         log_fmt = self.FORMATS.get(record.levelno)
-        formatter = logging.Formatter(log_fmt)
+        formatter = logging.Formatter(log_fmt, datefmt='%Y-%m-%d %H:%M:%S')
         return formatter.format(record)
 
 
@@ -47,5 +46,5 @@ class ColorlessFormatter(logging.Formatter):
 
     def format(self, record):
         log_fmt = self.FORMATS.get(record.levelno)
-        formatter = logging.Formatter(log_fmt)
+        formatter = logging.Formatter(log_fmt, datefmt='%Y-%m-%d %H:%M:%S')
         return formatter.format(record)

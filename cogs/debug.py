@@ -59,5 +59,6 @@ class Debug(commands.Cog, name='__Debug__'):
             logging.info(f"{user} tried enabling debugging but was not allowed to")
             await self.msg(ctx, "What are you trying to do? You don't have debugging rights.", True)
 
+
 async def setup(bot):
     await bot.add_cog(Debug(bot))
