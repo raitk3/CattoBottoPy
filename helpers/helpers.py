@@ -2,6 +2,10 @@
 import logging
 import asyncio
 
+import colorsys
+
+print()
+
 logger = logging.getLogger("CattoBotto.helper")
 
 def is_user(message, user, override):
