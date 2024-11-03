@@ -221,7 +221,7 @@ class CompetitionHandler(commands.Cog, name='Competition'):
 
     @commands.command()
     async def competition(self, ctx, title="Competition"):
-        competition_message = await ctx.send(f"{self.emoji.emoji.get("cat_loading", "")}Initialising competition")
+        competition_message = await ctx.send(f"{self.emoji.emoji.get('cat_loading', '')}Initialising competition")
         competition_thread = await competition_message.create_thread(name=title)
         competition = Competition(title, competition_message, competition_thread, buttons=self.Buttons(self))
         competition.set_host(self.convert_to_tag(ctx.author))
