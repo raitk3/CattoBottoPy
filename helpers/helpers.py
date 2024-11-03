@@ -32,18 +32,29 @@ def is_username_excluded(username):
 def get_color(color):
     colors_map = {
         "000000": "010101",
+        "amber": "FFC107",
         "black": "010101",
-        "red": "ff0000",
-        "green": "00ff00",
-        "blue": "0000ff",
-        "grey": "777777",
-        "gray": "777777",
-        "cyan": "00ffff",
-        "magenta": "ff00ff",
-        "yellow": "ffff00",
-        "orange": "ff7700",
+        "blue": "2196F3",
+        "bluegrey": "607D8B",
+        "brown": "795548",
+        "cyan": "4DD0E1",
+        "deeporange": "FF5722",
+        "deeppurple": "673AB7",
+        "indigo": "3F51B5",
+        "lime": "CDDC39",
+        "lightblue": "03A9F4",
+        "lightgreen": "8BC34A",
+        "green": "4CAF50",
+        "grey": "9E9E9E",
+        "magenta": "FF00FF",
+        "orange": "FF9800",
+        "pink": "EC407A",
+        "purple": "9C27B0",
+        "red": "F44336",
+        "rose": "F48FB1",
+        "teal": "009688",
+        "yellow": "FFEB3B",
     }
-
     return colors_map.get(color, color)
 
 async def send_aaaa(ctx):

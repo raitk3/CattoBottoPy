@@ -19,7 +19,7 @@ class Customization(commands.Cog, name='Customization'):
         self.logger.info('Customization tools are loaded')
 
     @commands.command()
-    async def namecolor(self, ctx, color):
+    async def namecolor(self, ctx, color: str = commands.parameter(description="- Chosen color name or hex code")):
         """Change your name to your chosen colour.
         
         A new role will be created with your username, which will use the specified color.
