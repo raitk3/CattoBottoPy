@@ -5,7 +5,7 @@ from discord.ext import commands
 import asyncio
 import logging
 from discord.ui import Button, View, button
-from helpers.errors import ParticipantExistsException, ParticipantDoesntExistException
+from helpers.errors import *
 from helpers.emoji import Emoji
 
 
@@ -32,6 +32,18 @@ class Game:
         if self.active and self.score > self.o_score:
             return 1
         return 0
+    
+    def get_win_draw_loss(self):
+        if self.score > self.o_score:
+            return "victory"
+        elif self.score < self.o_score:
+            return "defeat"
+        return "draw"
+    
+    def get_line(self):
+        if self.active:
+            return f"`{self.score}:{self.o_score} {self.get_win_draw_loss()}`"
+        return ""
 
 
 class Participant:
@@ -39,8 +51,19 @@ class Participant:
         self.name = name
         self.games = {}
 
-    def get_line(self):
-        return f"{self.name}: {self.get_points()} points"
+    def get_line(self, place=-1):
+        text = "points"
+        if self.get_points() == 1:
+            text = "point"
+        if place == -1:
+            return f"{self.name}: {self.get_points()} {text}"
+        elif place == 0:
+            return f"🥇 {self.name}: {self.get_points()} {text}"
+        elif place == 1:
+            return f"🥈 {self.name}: {self.get_points()} {text}"
+        elif place == 2:
+            return f"🥉 {self.name}: {self.get_points()} {text}"
+        return f"{place+1}. {self.name}: {self.get_points()} {text}"
     
     def add_opponent(self, opponent):
         if opponent.name != self.name and opponent.name not in self.games:
@@ -52,14 +75,30 @@ class Participant:
             score += self.games[game].get_points()
         return score
     
-    def get_diff(self):
+    def get_diff(self, as_str=False):
         diff = 0
+        plus = ""
         for game in self.games:
             diff += self.games[game].get_diff()
+        if as_str:
+            if diff > 0:
+                plus = "+"
+            return f"{plus}{diff}"
         return diff
 
     def result(self, score, o, o_score):
         self.games[o].set_score(score, o_score)
+
+    def get_games_table_lines(self):
+        lines = [f"**{self.name}**:"]
+        if len(self.games) == 0:
+            lines.append("No games")
+        for i, game in enumerate(self.games):
+            if i+1 == len(self.games):
+                lines.append(f"└ vs {game} {self.games[game].get_line()}")
+            else:
+                lines.append(f"├ vs {game} {self.games[game].get_line()}")
+        return lines
 
     def __str__(self):
         return self.name
@@ -71,41 +110,70 @@ class Competition:
         self.participants = []
         self.title = title
         self.winner = None
-        self.masters = []
+        self.host = None
+        self.mods = []
         self.message = message
         self.thread = thread
         self.buttons = buttons
 
-    def add_participant(self, participant):
-        for e_participant in self.participants:
-            if e_participant.name == participant:
-                raise ParticipantExistsException
-        participant_object = Participant(participant)
-        self.participants.append(participant_object)
-        for e_participant in self.participants:
-            e_participant.add_opponent(participant_object)
-            participant_object.add_opponent(e_participant)
+    def add_participant(self, author, participant):
+        if self.is_mod(author):
+            for e_participant in self.participants:
+                if e_participant.name == participant:
+                    raise ParticipantExistsException()
+            participant_object = Participant(participant)
+            self.participants.append(participant_object)
+            for e_participant in self.participants:
+                e_participant.add_opponent(participant_object)
+                participant_object.add_opponent(e_participant)
+        else:
+            raise NotAModException()
 
     def end_competition(self, user):
-        self.active = False
+        print(user)
+        if self.is_mod(user):
+            self.active = False
+            self.title += " (Finished)"
+        else:
+            raise NotAModException()
 
-    def result(self, part1, score1:int, part2, score2:int):
-        participant1, participant2 = None, None
-        for participant in self.participants:
-            if participant.name == part1:
-                participant1 = participant
-            elif participant.name == part2:
-                participant2 = participant
-        if participant1 is None or participant2 is None:
-            raise ParticipantDoesntExistException()
-        participant1.result(score1, part2, score2)
-        participant2.result(score2, part1, score1)
+    def result(self, author, part1, score1:int, part2, score2:int):
+        if self.is_mod(author):
+            participant1, participant2 = None, None
+            for participant in self.participants:
+                if participant.name == part1:
+                    participant1 = participant
+                elif participant.name == part2:
+                    participant2 = participant
+            if participant1 is None or participant2 is None:
+                raise ParticipantDoesntExistException()
+            participant1.result(score1, part2, score2)
+            participant2.result(score2, part1, score1)
+        else:
+            raise NotAModException()
 
-    def add_master(self, master):
-        self.masters.append(master)
+    def set_host(self, host):
+        self.host = host
+    
+    def add_mod(self, author, host):
+        if author == self.host:
+            self.mods.append(host)
+        else:
+            raise NotAHostException()
 
+    def is_mod(self, author):
+        return author in self.mods or author == self.host
+    
     def get_table(self):
-        return "\n".join([f"# {self.title}","**Leaderboard**"]+[f"{i+1}. {participant.get_line()}" for i, participant in enumerate(sorted(self.participants, key=lambda x: [-x.get_points(), -x.get_diff()]))])
+        lines = [f"# {self.title}", f"Hosted by: {self.host}"]
+        if len(self.mods) > 0:
+            lines.append(F"Moderated by: {', '.join(self.mods)}")
+        lines.append("**Leaderboard**")
+        lines += [f"{participant.get_line(i)} (Difference: {participant.get_diff(True)})" for i, participant in enumerate(sorted(self.participants, key=lambda x: [-x.get_points(), -x.get_diff()]))]
+        lines.append("**Games:**")
+        for participant in self.participants:
+            lines += participant.get_games_table_lines()
+        return "\n".join(lines)
 
     def __str__(self):
         return f"Title: {self.title}, Participants: {self.participants}"
@@ -131,14 +199,19 @@ class CompetitionHandler(commands.Cog, name='Competition'):
             author = f"<@{interaction.user.id}>"
             self.logger.info(f"{interaction.user} requested to be in the {interaction.message.id} competition")
 
-            await self.competition_handler.add_participant_from_message(interaction.message.id, author)
+            try:
+                await self.competition_handler.add_participant_from_message(interaction.message.id, author)
+            except Exception:
+                pass
             await interaction.response.defer()
 
-        @button(label="End", style=ButtonStyle.gray, emoji="🏁")
+        @button(label="Finish", style=ButtonStyle.gray, emoji="🏁")
         async def end_competition(self, interaction: Interaction, button: Button):
-            author = f"<@{interaction.user.id}>"
             self.logger.info(f"{interaction.user} requested end the competition")
-            await self.competition_handler.end_competition_from_message(interaction.message.id, author)
+            try:
+                await self.competition_handler.end_competition_from_message(interaction.message.id, interaction.user)
+            except Exception:
+                pass
             await interaction.response.defer()
 
 
@@ -147,18 +220,18 @@ class CompetitionHandler(commands.Cog, name='Competition'):
         self.logger.info('Competition tools are loaded')
 
     @commands.command()
-    async def init_competition(self, ctx, title="Competition"):
+    async def competition(self, ctx, title="Competition"):
         competition_message = await ctx.send(f"{self.emoji.emoji.get("cat_loading", "")}Initialising competition")
         competition_thread = await competition_message.create_thread(name=title)
         competition = Competition(title, competition_message, competition_thread, buttons=self.Buttons(self))
-        competition.add_master(ctx.author)
+        competition.set_host(self.convert_to_tag(ctx.author))
         self.competitions[competition_thread.id] = competition
         await self.update_message(competition.thread.id)
         await competition_thread.send("Competition initalisation  was successful")
         await ctx.message.delete()
 
     @commands.command()
-    async def add_participant(self, ctx, participant=None):
+    async def participant(self, ctx, participant=None):
         self.logger.info(f"Trying to add a participant to a competition")
         try:
             if participant is None:
@@ -166,30 +239,52 @@ class CompetitionHandler(commands.Cog, name='Competition'):
             self.logger.info(f"Adding {participant} to the competition")
             thread_id = ctx.channel.id
             competition = self.competitions[thread_id]
-            competition.add_participant(participant)
+            
+            competition.add_participant(self.convert_to_tag(ctx.author), participant)
             await self.update_message(ctx.channel.id)
             await ctx.send(f"{participant} added to competition.")
         except ParticipantExistsException as e:
             await e.send_message(ctx)
+        except NotAModException as e:
+            await e.send_message(ctx)
 
     @commands.command()
     async def result(self, ctx, part1, score1, part2, score2):
-        self.logger.info(f"Setting result: {part1} {score1} : {score2} {part2}")
         try:
             competition = self.competitions[ctx.channel.id]
-            competition.result(part1, score1, part2, score2)
+            competition.result(self.convert_to_tag(ctx.author), part1, score1, part2, score2)
             await self.update_message(ctx.channel.id)
         except ParticipantDoesntExistException as e:
-            e.send_message(ctx)
+            await e.send_message(ctx)
+        except NotAModException as e:
+            await e.send_message(ctx)
 
     @commands.command()
-    async def end_competition(self, ctx):
-        competition = self.competitions[ctx.channel.id]
-        competition.end_competition(ctx.author)
-        await self.update_message(ctx.channel.id, False)
-        self.logger.info("Competition {competition.thread.id} has been finished.")
-    
+    async def finish(self, ctx):
+        try:
+            competition = self.competitions[ctx.channel.id]
+            competition.end_competition(self.convert_to_tag(ctx.author))
+            await self.update_message(ctx.channel.id, False)
+            self.logger.info(f"Competition {competition.thread.id} has been finished.")
+            self.competitions[competition] = None
+        except NotAModException as e:
+            await e.send_message(ctx)
+
+    @commands.command()
+    async def add_mod(self, ctx, user):
+        try:
+            competition = self.competitions[ctx.channel.id]
+            competition.add_mod(f'<@{ctx.author.id}>', user)
+            await ctx.channel.send(f"Added {user} as a mod")
+            await self.update_message(ctx.channel.id)
+        except NotAHostException as e:
+            await e.send_message(ctx)
+
+
     # Helper functions
+    def convert_to_tag(self, author):
+        return f"<@{author.id}>"
+
     async def update_message(self, thread_id, active=True):
         competition = self.competitions[thread_id]
         message = competition.message
@@ -207,10 +302,12 @@ class CompetitionHandler(commands.Cog, name='Competition'):
             if comp.message.id == message_id:
                 competition = comp
         try:
-            competition.add_participant(participant)
+            competition.add_participant(competition.host, participant)
             await self.update_message(message_id)
             await competition.thread.send(f"{participant} added to competition.")
         except ParticipantExistsException as e:
+            await e.send_message(competition.thread)
+        except NotAModException as e:
             await e.send_message(competition.thread)
 
     async def end_competition_from_message(self, message_id, user):
@@ -220,9 +317,10 @@ class CompetitionHandler(commands.Cog, name='Competition'):
             if comp.message.id == message_id:
                 competition = comp
         try:
-            competition.end_competition(user)
-            await self.update_message(message_id, False)
-        except ParticipantExistsException as e:
+            competition.end_competition(self.convert_to_tag(user))
+            await self.update_message(competition.thread.id, False)
+            self.logger.info(f"Competition {competition.thread.id} has been finished.")
+        except NotAModException as e:
             await e.send_message(competition.thread)
         
 async def setup(bot):

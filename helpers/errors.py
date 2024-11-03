@@ -20,3 +20,17 @@ class CompetitionInactiveException(Exception):
 
     async def send_message(self, ctx):
         await ctx.send("Competition is concluded. No modifications can be made.")
+
+class NotAHostException(Exception):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+
+    async def send_message(self, ctx):
+        await ctx.send("You are not a host, sorry.")
+
+class NotAModException(Exception):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+
+    async def send_message(self, ctx):
+        await ctx.send("You are not a mod, sorry.")
