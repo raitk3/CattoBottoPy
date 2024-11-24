@@ -1,16 +1,14 @@
 """Customization stuff"""
 
-import discord
-from discord import interactions
+from discord import app_commands
 from discord.ext import commands
-import asyncio
 import logging
 from helpers import helpers
 
 class Customization(commands.Cog, name='Customization'):
     """Change your name colour n'stuff"""
     
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.logger = logging.getLogger("CattoBotto.customization")
 
@@ -18,8 +16,9 @@ class Customization(commands.Cog, name='Customization'):
     async def on_ready(self):
         self.logger.info('Customization tools are loaded')
 
-    @commands.command()
-    async def namecolor(self, ctx, color: str = commands.parameter(description="- Chosen color name or hex code")):
+    @commands.hybrid_command()
+    @app_commands.describe(color = "Color you want your name to be")
+    async def namecolor(self, ctx, color: str):
         """Change your name to your chosen colour.
         
         A new role will be created with your username, which will use the specified color.
@@ -28,7 +27,6 @@ class Customization(commands.Cog, name='Customization'):
         Additionally a hex code can be used. Hex code must be given Without "0x".
         Useful tool for copying hex codes: https://materialui.co/colors/
         """
-
         user = ctx.author
         username = user.name
 
@@ -56,6 +54,7 @@ class Customization(commands.Cog, name='Customization'):
 
         role = discord.utils.get(ctx.guild.roles, name=username)
         await user.add_roles(role)
+        await ctx.send("Success", ephemeral=True)
 
 
 async def setup(bot):

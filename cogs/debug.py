@@ -1,12 +1,13 @@
 """Debug methods to test that bot is awake and functions properly"""
 
 import logging
+from discord import app_commands
 from discord.ext import commands
 from helpers import helpers
 
 class Debug(commands.Cog, name='__Debug__'):
     """Debugging"""
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.debug_enabled = set()
         self.logger = logging.getLogger("CattoBotto.debug")

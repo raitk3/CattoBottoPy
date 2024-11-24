@@ -1,16 +1,13 @@
 """Experimental things"""
 
-from discord import Embed
+from discord import Embed, app_commands
 from discord.ext import commands
-import asyncio
 import logging
-import re
-from helpers import helpers
 
 class Miscellaneous(commands.Cog, name='Miscellaneous'):
     """Random junk"""
     
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.logger = logging.getLogger("CattoBotto.misc")
 
@@ -18,53 +15,49 @@ class Miscellaneous(commands.Cog, name='Miscellaneous'):
     async def on_ready(self):
         self.logger.info('Miscellaneous tools are loaded')
 
-    @commands.command()
+    @commands.hybrid_command(name="ping")
     async def ping(self, ctx):
         """Check connection and user detection."""
         id = ctx.author
         self.logger.info(f"Received ping from {id}")
-        await ctx.send(f"Pong {id}!")
+        await ctx.send(f"Pong {id}!", ephemeral=True)
 
-    @commands.command()
-    async def time_left_to_speak(self, ctx, *, args=None):
+    @commands.hybrid_command(name = "time_left_to_speak")
+    @app_commands.describe(time_spoken = "Time you have spoken in seconds")
+    @app_commands.describe(questions_asked = "Number of questions asked by the other person")
+    @app_commands.describe(damn_thats_crazys = "Number of \"damn, that's crazy\"s")
+    @app_commands.describe(mhms = "Number of 'mhm's")
+    @app_commands.describe(time_checks = "Number of time checks")
+    @app_commands.describe(slow_nods = "Number of slow nods")
+    @app_commands.describe(deep_exhales = "Number of DEEP EXHALES")
+    @app_commands.describe(user = "User who you want to tell this to")
+    async def time_left_to_speak(self, ctx,
+                                 time_spoken:int=0,
+                                 questions_asked:int=0,
+                                 damn_thats_crazys:int=0,
+                                 mhms:int=0,
+                                 time_checks:int=0,
+                                 slow_nods:int=0,
+                                 deep_exhales:int=0,
+                                 user:str=""):
         """
         Apply a useful formula provided by Zach Star Himself
 
-        Arguments you can to give:
-        t: time someone has spoken in seconds
-        q: Questions asked by the other person
-        dtc: number of "Damn, That's Crazy"s
-        mhm: number of "mhm"s
-        tc: number of Time checks
-        sn: number of Slow Nods
-        de: number of DEEP Exhales
-        Values that are not given will be left as 0. Floating point numbers will be rounded to the nearest integer.
+        Values that are not given will be left as 0. Values have to be integers.
         
         Taken from https://www.youtube.com/watch?v=a9Xo7VpelgU
         Applies for last 600 seconds (10 minutes)
         """
-        values = {"t":0, "q":0, "dtc":0, "mhm":0, "tc":0, "sn":0, "de":0}
-        pattern = re.compile(r"(\w+)=([0-9]*\.*[0-9]*)")
-        if args:
-            for key, value in pattern.findall(args):
-                if key in values:
-                    values[key] = value
+        user_text = "You"
+        if user != "":
+            user_text = f"{user}, you"
 
-        T = int(round(float(values["t"])))
-        Nqabop = int(round(float(values["q"])))
-        Ndtc = int(round(float(values["dtc"])))
-        Nmhm = int(round(float(values["mhm"])))
-        Ntc = int(round(float(values["tc"])))
-        Nsn = int(round(float(values["sn"])))
-        Nde = int(round(float(values["de"])))
-
-        values_used = f"Values that were used: t={T}, q={Nqabop}, dtc={Ndtc}, mhm={Nmhm}, tc={Ntc}, sn={Nsn}, de={Nde}\n"
         try:
-            self.logger.info(f"(600 - {T} + 200 * {Nqabop})/({Ndtc} + {Nmhm} + ({Ntc} / 3) + ({Nsn} / 2) + (1 + {Nde})**1000000)")
-            if Nde > 0:
+            self.logger.info(f"(600 - {time_spoken} + 200 * {questions_asked})/({damn_thats_crazys} + {mhms} + ({time_checks} / 3) + ({slow_nods} / 2) + (1 + {deep_exhales})**1000000)")
+            if deep_exhales > 0:
                 result = 0
             else:
-                result = max(0, round((600 - T + 200 * Nqabop)/(Ndtc + Nmhm + (Ntc / 3) + (Nsn / 2) + (1+Nde)**1000000), 1))
+                result = max(0, round((600 - time_spoken + 200 * questions_asked)/(damn_thats_crazys + mhms + (time_checks / 3) + (slow_nods / 2) + (1+deep_exhales)**1000000), 1))
                 self.logger.info(f"Result: {result} seconds")
             if result > 120:
                 flavour_text = " before we have to classify sound waves as terrorism."
@@ -77,11 +70,11 @@ class Miscellaneous(commands.Cog, name='Miscellaneous'):
             else:
                 flavour_text = ", so it looks like it's time to make a starfish and go fuck yourself."
 
-            await ctx.send(f"{values_used}You have {result} seconds{flavour_text}")
+            await ctx.send(f"{user_text} have {result} seconds{flavour_text}")
         except Exception:
-            await ctx.send(f"{values_used}Something got fucky, fix the command you used.")
+            await ctx.send(f"Something got fucky, fix the command you used.")
 
-    @commands.command()
+    @commands.hybrid_command()
     async def about(self, ctx):
         """Idk, it's something? ¯\_(ツ)_/¯"""
         text = ["```",
@@ -89,8 +82,8 @@ class Miscellaneous(commands.Cog, name='Miscellaneous'):
                 "║ Awwh, I didn't know you cared <3               ║",
                 "║ Or was it just an accident? :D                 ║",
                 "╟────────────────────────────────────────────────╢",
-                "║         ▄█                    Made by sBYTEr   ║",
-                "║       ▄▀ █                    2021 - 2024      ║",
+                "║         ▄█                      Made by sBYTEr ║",
+                "║       ▄▀ █                         2021 - 2024 ║",
                 "║     ▄▀   █                                     ║",
                 "║   ▄▀▄    █    ▄▀▀▄                             ║",
                 "║ ▄▀   ▀▄  █  ▄▀    █                            ║",
@@ -109,17 +102,21 @@ class Miscellaneous(commands.Cog, name='Miscellaneous'):
         embed = Embed(title="CattoBotto",
                 url="https://github.com/raitk3/CattoBottoPy",
                 description="\n".join(text))
-        await ctx.send(embed=embed)
+        await ctx.send(embed=embed, ephemeral=True)
 
-    @commands.command()
-    async def mark_error(self, ctx, message = ""):
+    @commands.hybrid_command()
+    @app_commands.describe(message = "Error message for me")
+    async def mark_error(self, ctx, message:str = ""):
+        """
+        Mark an error of this bot in logs
+        """
         server = ctx.guild.id
         server_name = ctx.guild.name
         "In case bot makes something unexpected, mark error place in logs, so I would know something happened."
         self.logger.error(f"[{server_name} ({server})] Marked error")
         if message:
             self.logger.error(message)
-        await ctx.send("Error noted and marked in logs. Thank you!")
+        await ctx.response.send_message("Error noted and marked in logs. Thank you!", ephemeral=True)
 
 async def setup(bot):
     await bot.add_cog(Miscellaneous(bot))

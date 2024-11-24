@@ -1,7 +1,7 @@
 """Random AU queue handler"""
 
 from discord.ext import commands
-from discord import Embed, ButtonStyle, Interaction
+from discord import app_commands, Embed, ButtonStyle, Interaction
 from discord.ui import Button, View, button
 
 import logging
@@ -9,7 +9,7 @@ import logging
 class QueueHandler(commands.Cog, name='Queue handler'):
     """A simple queue'ing system"""
     
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.current_seekers = {}
         self.queues = {}
@@ -59,7 +59,7 @@ class QueueHandler(commands.Cog, name='Queue handler'):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        self.logger.info("Queue handler is are loaded")
+        self.logger.info("Queue handler tools are loaded")
 
     @commands.command()
     async def init_queue(self, ctx, force=''):

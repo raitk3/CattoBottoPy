@@ -1,35 +1,33 @@
 """Experimental things"""
 
-import discord
-from discord import interactions
+from discord import app_commands
 from discord.ext import commands
-import asyncio
 import logging
-from helpers import helpers
+from helpers.emoji import Emoji
 
 class Experimental(commands.Cog, name='__Experimental__'):
     """Experimental stuff that most likely won't work"""
     
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.logger = logging.getLogger("CattoBotto.experimental")
         self.last_sent = None
+        self.emoji = Emoji()
 
     @commands.Cog.listener()
     async def on_ready(self):
         self.logger.info('Experimental tools are loaded')
         
-    @commands.command()
+    @commands.command(hidden=True)
     async def channel_id(self, ctx):
         print("Hi")
         id = ctx.channel.id
         print(id)
         await ctx.send(id)
 
-    @commands.command()
+    @commands.command(hidden=True)
     async def test(self, ctx):
-        print(ctx.author.id)
-        await ctx.author.send('<a:assslap:929176697415270491>')
+        await ctx.author.send(self.emoji.emoji["ass_slap"])
 
 
 async def setup(bot):

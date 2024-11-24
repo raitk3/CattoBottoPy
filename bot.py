@@ -67,7 +67,6 @@ async def load(bot, dev):
             logger.info(f"Loading module {cog_name}")
             await bot.load_extension(f'cogs.{cog_name}')
 
-
 async def main(arguments):
     dev = False
     for argument in arguments:
@@ -79,6 +78,13 @@ async def main(arguments):
         logger.setLevel(logging.INFO)
 
     bot = init_bot(dev)
+
+    @bot.event
+    async def on_ready():
+        try:
+            await bot.tree.sync()
+        except Exception as e:
+            logger.error(e)
 
     token=""
     with open("token.txt") as f:

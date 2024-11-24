@@ -2,13 +2,14 @@
 
 import logging
 
+from discord import app_commands
 from discord.ext import commands
 from helpers import helpers
 
 class ChatTools(commands.Cog, name='Chat'):
     """Chat related tools"""
     
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.logger = logging.getLogger("CattoBotto.chat_tools")
 
@@ -16,7 +17,7 @@ class ChatTools(commands.Cog, name='Chat'):
     async def on_ready(self):
         self.logger.info('Chat tools are loaded')
 
-    @commands.command(hidden=True)
+    @commands.hybrid_command(hidden=True)
     async def purge(self, ctx, number, user=""):
         """Remove messages from chat."""
         debug = self.bot.get_cog('__Debug__')

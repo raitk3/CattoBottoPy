@@ -17,17 +17,17 @@ def is_user(message, user, override):
     return author == user_strip
 
 def is_user_debugger(user):
-    debugger = "debug" in [role.name for role in user.roles]
+    debugger = "debug" in [role.name.lower() for role in user.roles]
     logger.debug(f"{user} is{' not' if not debugger else ''} a debugger.")
     return debugger
 
 def is_user_admin(user):
-    admin = "admin" in [role.name for role in user.roles]
+    admin = "cbadmin" in [role.name.lower() for role in user.roles]
     logger.debug(f"{user} is{' not' if not admin else ''} an admin.")
     return admin
 
 def is_username_excluded(username):
-    return username.lower in ["admin", "moderator", "debugger", "mod", "dev"]
+    return username.lower in ["cbadmin", "moderator", "debugger", "mod", "dev"]
 
 def get_color(color):
     colors_map = {
