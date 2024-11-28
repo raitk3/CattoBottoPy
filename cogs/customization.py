@@ -1,6 +1,6 @@
 """Customization stuff"""
 
-from discord import app_commands
+from discord import app_commands, utils, Color
 from discord.ext import commands
 import logging
 from helpers import helpers
@@ -45,14 +45,14 @@ class Customization(commands.Cog, name='Customization'):
 
         if not role_exists:
             self.logger.info(f"Creating role {username} with color {color}")
-            await guild.create_role(name=username, color=discord.Color(hex_color))
+            await guild.create_role(name=username, color=Color(hex_color))
             self.logger.info(f"Assigning role to {username}")
         else:
             self.logger.info(f"Changing role {username} color to {color}")
-            role = discord.utils.get(ctx.guild.roles, name=username)
-            await role.edit(color=discord.Color(hex_color))
+            role = utils.get(ctx.guild.roles, name=username)
+            await role.edit(color=Color(hex_color))
 
-        role = discord.utils.get(ctx.guild.roles, name=username)
+        role = utils.get(ctx.guild.roles, name=username)
         await user.add_roles(role)
         await ctx.send("Success", ephemeral=True)
 
